@@ -3,44 +3,109 @@
   <head>
     <%- include('./partials/head') %>
     <title>Blog</title>
+
+    <style>
+      .blog-image {
+        max-height: 400px;
+        object-fit: cover;
+      }
+
+      pre {
+        white-space: pre-wrap;   /* Wrap text on small screens */
+        word-wrap: break-word;
+        font-family: inherit;
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+      }
+
+      .author-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .comment-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    </style>
   </head>
+
   <body>
     <%- include('./partials/nav') %>
 
+    <!-- Blog Content -->
     <div class="container mt-4">
-      <h1><%= blog.title %></h1>
-      <img src="<%= blog.coverImageURL %>" width="700px" />
+      <h1 class="mb-3 text-center text-md-start">
+        <%= blog.title %>
+      </h1>
+
+      <img
+        src="<%= blog.coverImageURL %>"
+        class="img-fluid w-100 rounded blog-image"
+        alt="Blog Cover"
+      />
+
       <pre class="mt-3"><%= blog.body %></pre>
     </div>
 
-    <div class="container mt-4">
-      <img src="<%= blog.createdBy.profileImageURL %>" width="50px" /> <%=
-      blog.createdBy.fullName %>
+    <!-- Author -->
+    <div class="container mt-4 d-flex align-items-center gap-2">
+      <img
+        src="<%= blog.createdBy.profileImageURL %>"
+        class="author-img"
+        alt="Author"
+      />
+      <span class="fw-semibold">
+        by <%= blog.createdBy.fullName %>
+      </span>
     </div>
 
-    <div class="container mt-3">
-      <h1>Comments (<%= comments.length %>)</h1>
+    <!-- Comments -->
+    <div class="container mt-4">
+      <h4 class="mb-3">
+        Comments (<%= comments.length %>)
+      </h4>
+
       <% if (locals.user) { %>
-      <form action="/blog/comment/<%= blog._id %>" method="post">
-        <div class="mb-3">
-          <input
-            type="text"
+      <form
+        action="/blog/comment/<%= blog._id %>"
+        method="post"
+        class="mb-4"
+      >
+        <div class="mb-2">
+          <textarea
             name="content"
             class="form-control"
-            placeholder="Enter your comment"
-          />
-          <button class="btn btn-sm btn-primary" type="submit">Add</button>
+            rows="3"
+            placeholder="Write your comment..."
+            required
+          ></textarea>
         </div>
+        <button class="btn btn-primary btn-sm" type="submit">
+          Add Comment
+        </button>
       </form>
-
       <% } %>
-      <div class="mt-3">
+
+      <!-- Comment List -->
+      <div class="d-flex flex-column gap-3">
         <% comments.forEach(comment => { %>
-        <div>
-          <img src="<%= comment.createdBy.profileImageURL %>" width="50px" />
-          <%= comment.createdBy.fullName %>
-          <pre><%= comment.content %></pre>
-        </div>
+          <div class="border rounded p-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <img
+                src="<%= comment.createdBy.profileImageURL %>"
+                class="comment-img"
+                alt="User"
+              />
+              <strong><%= comment.createdBy.fullName %></strong>
+            </div>
+            <p class="mb-0"><%= comment.content %></p>
+          </div>
         <% }) %>
       </div>
     </div>
